@@ -64,6 +64,7 @@ var words = [
 
 $(init);
 
+
 $(document).on('submit', '#board', function(e){
   e.preventDefault();
   test();
@@ -100,23 +101,33 @@ function init(){
   html.unshift('<input type="submit" id="submit" value="svara"/>');
   html.unshift('<label for="correct">Visa facit</label><input type="checkbox" id="correct"/>');
   $('#board').html(html.join(''));
+  printClues();
+}
 
+  function checkDirection(eachWordObj){
+    if (eachWordObj.start[0] == eachWordObj.end[0]) {
+      return 'Lodrät';
+    } else {
+      return 'Vågrät';
+    }
+  }
 
   // print clues
-  var html = [], direction, start, word;
-  for(var i = 0; i < words.length; i++){
-    word = words[i];
-    if(word.start[0] == word.end[0]){
-      direction = 'Lodrät';
-      start = word.start[0];
-    }else{
-      direction = 'Vågrät';
-      start = word.start[1];
+  function printClues(){
+    var html = [];
+    for(var i = 0; i < words.length; i++){
+      let eachWordObj = words[i];
+      let direction = checkDirection(words[i]);
+      let startPosition;
+      if(direction == 'Lodrät'){
+        startPosition = eachWordObj.start[0];
+      }else{
+        startPosition = eachWordObj.start[1];
+      }
+      html.push(direction + ' ' + startPosition + ' "' + eachWordObj.clue + '" (' + eachWordObj.word.length + ' bokstäver)');
     }
-    html.push(direction + ' ' + start + ' "' + word.clue + '" (' + word.word.length + ' bokstäver)');
+    $('#clues').html('<p>' + html.join('</p><p>') + '</p>');
   }
-  $('#clues').html('<p>' + html.join('</p><p>') + '</p>');
-}
 
 
 // Gör om till riktig funktion och bättre namn än "test"
@@ -124,6 +135,11 @@ var test = function(){
   for(var i = 0; i < words.length; i++){
     test2(words[i]);
   }
+}
+
+
+function vertical(){
+  
 }
 
 // Gör om till riktig funktion och bättre namn än test2
