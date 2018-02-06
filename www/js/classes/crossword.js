@@ -67,7 +67,7 @@ $(init);
 
 $(document).on('submit', '#board', function(e){
   e.preventDefault();
-  test();
+  objectIterator();
   $('#points').html('Points: ' + wordPoints);
 });
 
@@ -114,7 +114,7 @@ function init(){
 
   // print clues
   function printClues(){
-    var html = [];
+    let infoContainer = [];
     for(var i = 0; i < words.length; i++){
       let eachWordObj = words[i];
       let direction = checkDirection(words[i]);
@@ -124,14 +124,14 @@ function init(){
       }else{
         startPosition = eachWordObj.start[1];
       }
-      html.push(direction + ' ' + startPosition + ' "' + eachWordObj.clue + '" (' + eachWordObj.word.length + ' bokstäver)');
+      infoContainer.push(direction + ' ' + startPosition + ' "' + eachWordObj.clue + '" (' + eachWordObj.word.length + ' bokstäver)');
     }
-    $('#clues').html('<p>' + html.join('</p><p>') + '</p>');
+    $('#clues').html('<p>' + infoContainer.join('</p><p>') + '</p>');
   }
 
 
 // Gör om till riktig funktion och bättre namn än "test"
-var test = function(){
+function objectIterator(){
   for(var i = 0; i < words.length; i++){
     test2(words[i]);
   }
@@ -139,30 +139,36 @@ var test = function(){
 
 
 function vertical(){
-  
+
 }
 
 // Gör om till riktig funktion och bättre namn än test2
-var test2 = function(word){
+function test2(eachWordObj){
   var x, y, letter, testLetter, testWord = '', id, matchJqEls = [];
-  if(word.start[0] == word.end[0]){
+  let startYPositionY;
+  let letterOfWord;
+  let inputLetter;
+  let inputWord = "";
+  if(checkDirection(eachWordObj) == "Lodrät"){
     // LODRÄT:
-    y = word.start[0];
-    for(x = word.start[1]; x <= word.end[1]; x++){
-      letter = word.word.charAt(x-word.start[1]);
-      id = '#x' + x + 'y' + y;
-      testLetter = $(id).val().toLowerCase();
-      if(testLetter && testLetter == letter){
-        testWord += letter;
+    startPositionY = eachWordObj.start[0];
+    for(let startPositionX = eachWordObj.start[1]; startPositionX <= eachWordObj.end[1]; startPositionX++){
+      letterOfWord = eachWordObj.word.charAt(startPositionX-eachWordObj.start[1]);
+      id = '#x' + startPositionX + 'y' + startPositionY;
+      console.log(id);
+      inputLetter = $(id).val().toLowerCase();
+      if(inputLetter === letterOfWord){
+        inputWord += inputLetter;
         matchJqEls.push(id);
       }
-      if($('#correct:checked').length){
-        $(id).val(letter);
-      }else{
-        if(testWord && testWord == word.word){
+
+      if($('#correct:checked')){
+        $(id).val(letterOfWord);
+      }else if(inputWord == eachWordObj.word){
           wordPoints++;
-          console.log('word',word.word,'complete match');
-          for(var j = 0; j < matchJqEls.length; j++){
+          console.log('word',eachWordObj.word,'complete match');
+
+          for(let j = 0; j < matchJqEls.length; j++){
             $(matchJqEls[j]).attr('disabled','disabled');
           }
         }
